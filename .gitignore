@@ -1,0 +1,14 @@
+*.apk
+*.ap_
+*.dex
+*.class
+*.log
+bin/
+gen/
+local.properties
+.classpath
+.project
+.settings/
+.DS_Store
+authentication.xml
+

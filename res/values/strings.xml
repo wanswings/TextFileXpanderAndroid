@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TextFileXpander</string>
+    <string name="app_summary">Paste your fixed phrases.</string>
+    <string name="title_activity_main">TextFileXpander</string>
+    <string name="title_activity_sub">TextFileXpander</string>
+    <string name="title_activity_dropbox_auth">Dropbox Authentication</string>
+    <string name="action_load_data">Load Data</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_add_notification">Add Notification</string>
+    <string name="action_remove_notification">Remove Notification</string>
+    <string name="action_view_type">View Type</string>
+    <string name="action_reset">Reset</string>
+    <string name="dialog_title_select_storage">Choose Storage</string>
+    <string name="dialog_title_select_dir">Choose Folder</string>
+    <string name="dialog_title_select_view_type">Choose View Type</string>
+    <string name="dialog_title_reset">Reset</string>
+    <string name="dialog_message_reset">Do you want to initialize application data?</string>
+    <string name="dialog_loading_entries">Loading entries&#8230;</string>
+    <string name="dialog_loading_files">Loading files&#8230;</string>
+    <string name="mark_next">&gt;</string>
+    <string name="toast_restart">Restarting App&#8230;</string>
+    <string name="toast_copied_clipboard">Text has been copied to clipboard</string>
+    <string name="error_internet_not_available">Internet not available</string>
+    <string name="error_external_storage_not_ready">External storage not ready</string>
+
+</resources>
