@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,8 +28,6 @@ import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,10 +56,11 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 	protected static final String EXTRA_FROM_MAIN = "fromMain";
 	protected static final String EXTRA_PARAM_MAIN = "paramMain";
 
+	private static final String SAMPLE_FILE = "sample.txt";
 	private static final String VIEW_TYPE_STD = "Standard View";
 	private static final String VIEW_TYPE_EXP = "Expandable View";
 	private static final String[] VIEW_TYPES = {VIEW_TYPE_STD, VIEW_TYPE_EXP};
-	private static final String[] STORAGE_NAMES = {"Dropbox", "External Storage"};
+	private static final String[] STORAGE_NAMES = {"Dropbox", "EXT Storage"};
 	private static final String[] STORAGE_CLASSES = {Dropbox.class.getName(), ExternalStorage.class.getName()};
 
 	private boolean isRestartApp = false;
@@ -97,7 +95,17 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 		prefs = new PrivateSharedPrefs(this, PrivateSharedPrefs.SAVE_PREFS_NAME_MAIN);
 		Log.i(packageName, classNameForLog + "onCreate start");
 
+		String[] keys = prefs.getKeys(PrivateSharedPrefs.SAVE_KEYS_FIRSTTIME);
+		if (keys == null) {
+			// first time
+			copySampleFile();
+			prefs.storeKeys(PrivateSharedPrefs.SAVE_KEYS_FIRSTTIME, new String[]{"1"});
+		}
+
 		loadKeys();
+		if (!currentStorage.equals("")) {
+			setTitle(getString(R.string.title_activity_main) + " [" + currentStorage + "]");
+		}
 
 		String action = getIntent().getAction();
 		if (action != null && action.equals(Intent.ACTION_BOOT_COMPLETED)) {
@@ -137,14 +145,8 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 
 		boolean fromSub = intent.getBooleanExtra(SubActivity.EXTRA_FROM_SUB, false);
 		if (fromSub) {
-			String result = intent.getStringExtra(SubActivity.EXTRA_RESULT_SUB);
-			String type = intent.getStringExtra(SubActivity.EXTRA_RESULT_SUB_TYPE);
-
-			if (type.equals(SubActivity.EXTRA_RESULT_SUB_TYPE_LONG_CLICK)) {
-				childItemLongClick(result);
-			}
-			else {
-				pushData(result);
+			boolean isStay = intent.getBooleanExtra(SubActivity.EXTRA_RESULT_SUB, false);
+			if (!isStay) {
 				finish();
 			}
 		}
@@ -235,6 +237,9 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 		Log.i(packageName, classNameForLog + "readyToReadPrivateFiles start");
 		closeStorage();
 		saveKeys(null, null, currentStorage);
+		if (!currentStorage.equals("")) {
+			setTitle(getString(R.string.title_activity_main) + " [" + currentStorage + "]");
+		}
 		refreshLocalData();
 	}
 
@@ -251,6 +256,37 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 		Log.i(packageName, classNameForLog + "cancelSelectDirDialog start");
 		closeStorage();
 		loadKeys();
+	}
+
+	private boolean copySampleFile() {
+		boolean result = false;
+
+		InputStream is = null;
+		FileOutputStream fos = null;
+		try {
+			is = getAssets().open(SAMPLE_FILE);
+			fos = openFileOutput(SAMPLE_FILE, Context.MODE_PRIVATE);
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = is.read(buf)) > 0) {
+				fos.write(buf, 0, len);
+			}
+			result = true;
+		}
+		catch (IOException e) {
+			Log.e(packageName, classNameForLog + e.toString());
+		}
+		finally {
+			try {
+				if (fos != null) fos.close();
+				if (is != null) is.close();
+			}
+			catch (IOException e) {
+				Log.e(packageName, classNameForLog + e.toString());
+			}
+		}
+
+		return result;
 	}
 
 	private void loadKeys() {
@@ -433,79 +469,6 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 		.show();
 	}
 
-	private void pushData(String str) {
-
-		Pattern pattern = Pattern.compile("^([a-z]+):\\s*(.+)");
-		Matcher match = pattern.matcher(str);
-		if (match.find()) {
-			String matchCmd = match.group(1);
-			Log.i(packageName, classNameForLog + currentStorage + " matchCmd..." + matchCmd);
-			String matchStr = match.group(2);
-			Log.i(packageName, classNameForLog + currentStorage + " matchStr..." + matchStr);
-
-			String url = null;
-			String action = null;
-			boolean isSendClipboard = false;
-			try {
-				if (matchCmd.equals("mailto")) {
-					// mailto
-					url = "mailto:" + matchStr;
-					action = Intent.ACTION_SENDTO;
-				}
-				else if (matchCmd.equals("map")) {
-					// map
-					url = "http://maps.google.co.jp/maps?q=" + URLEncoder.encode(matchStr, "utf-8");
-					action = Intent.ACTION_VIEW;
-				}
-				else if (matchCmd.equals("people")) {
-					// people
-					url = "content://contacts/people/";
-					action = Intent.ACTION_VIEW;
-					str = matchStr;
-					isSendClipboard = true;
-				}
-				else if (matchCmd.equals("route")) {
-					// route
-					Pattern pattern2 = Pattern.compile("^\\s*from:\\s*(.+)\\s+to:\\s*(.+)");
-					Matcher match2 = pattern2.matcher(matchStr);
-					if (match2.find()) {
-						String matchfrom = match2.group(1);
-						Log.i(packageName, classNameForLog + currentStorage + " matchfrom..." + matchfrom);
-						String matchto = match2.group(2);
-						Log.i(packageName, classNameForLog + currentStorage + " matchto..." + matchto);
-
-						url = "http://maps.google.co.jp/maps?saddr=" + URLEncoder.encode(matchfrom, "utf-8")
-														+ "&daddr=" + URLEncoder.encode(matchto, "utf-8");
-						action = Intent.ACTION_VIEW;
-					}
-				}
-				else if (matchCmd.equals("url")) {
-					// url
-					url = matchStr;
-					action = Intent.ACTION_VIEW;
-				}
-				if (action != null) {
-					Log.i(packageName, classNameForLog + currentStorage + " " + action + "..." + url);
-					Intent intent = new Intent();
-					intent.setAction(action);
-					intent.setData(Uri.parse(url));
-					startActivity(intent);
-					if (!isSendClipboard) {
-						return;
-					}
-				}
-			}
-			catch (Exception e) {
-				Log.e(packageName, classNameForLog + "cannot launch..." + matchCmd);
-			}
-		}
-
-		ClipData clip = ClipData.newPlainText("copied_text", str);
-		ClipboardManager cm =(ClipboardManager)this.getSystemService(Context.CLIPBOARD_SERVICE);
-		cm.setPrimaryClip(clip);
-		Toast.makeText(MainActivity.this, R.string.toast_copied_clipboard, Toast.LENGTH_LONG).show();
-	}
-
 	private void refreshLocalData() {
 		if (currentViewType.equals(VIEW_TYPE_EXP)) {
 			refreshLocalData4ExpandableListView();
@@ -626,7 +589,8 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 					ExpandableListAdapter adapter = listView.getExpandableListAdapter();
 					@SuppressWarnings("unchecked")
 					Map<String, String> item = (Map<String, String>)adapter.getChild(groupPosition, childPosition);
-					childItemLongClick(item.get("child"));
+					PushData push = new PushData(MainActivity.this);
+					push.itemLongClick(item.get("child"));
 				}
 				return true;
 			}
@@ -637,8 +601,11 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 				ExpandableListAdapter adapter = parent.getExpandableListAdapter();
 				@SuppressWarnings("unchecked")
 				Map<String, String> item = (Map<String, String>)adapter.getChild(groupPosition, childPosition);
-				pushData(item.get("child"));
-				finish();
+				PushData push = new PushData(MainActivity.this);
+				boolean isStay = push.itemClick(item.get("child"));
+				if (!isStay) {
+					finish();
+				}
 				return false;
 			}
 		});
@@ -762,16 +729,5 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 		intent.setAction(Intent.ACTION_VIEW);
 		intent.setDataAndType(Uri.parse("file://" + fullPath), "text/plain");
 		startActivity(intent);
-		finish();
-	}
-
-	private void childItemLongClick(String item) {
-		Log.i(packageName, classNameForLog + "childItemLongClick..." + item);
-
-		Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT, item);
-		startActivity(Intent.createChooser(intent, "Choose Share App"));
-		finish();
 	}
 }

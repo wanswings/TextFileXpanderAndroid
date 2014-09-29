@@ -10,7 +10,7 @@ TextFileXpander is a simple application for Android.
 Easy to paste your fixed phrase to the Clipboard.  
 Launch your default application for text/plain when you long tap a file name.  
 Magic words provides for cooperation with an external application.  
-Share with your Mac, Windows and Android devices.  
+Share with your Mac, Windows, iOS and Android devices.  
 
 Requirement
 --------------------
@@ -19,7 +19,7 @@ Requirement
 Preparation
 --------------------
 1. Create a new folder and name it e.g. TextFileXpander.
-2. Create UTF-8 text files in your folder, like [this](https://github.com/wanswings/TextFileXpanderData/).
+2. Create UTF-8 text files in a folder on your Mac or Windows, like [this](https://github.com/wanswings/TextFileXpanderData/).
 3. Copy your folder to external storage on your device or Dropbox, in the root(top) folder.
 
 `TextFileXpander uses .txt extension only.`
@@ -31,7 +31,11 @@ Installation
 
 How-To Use
 --------------------
-* Launch TextFileXpander from the App Drawer(App Tray) or the Home Screen. During the first launch, you can see the Choose Storage dialog.
+* Launch TextFileXpander from the App Drawer(App Tray) or the Home Screen. During the first launch, you can see "sample.txt".
+
+![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot0.png)
+
+* Menu > Load Data > Choose Storage.
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot1.png)
 
@@ -80,7 +84,7 @@ How-To Use
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot9.png)
 
-* Sample screenshots for Tablet.
+* Screenshots of TextFileXpander running on 7-inch Tablet.
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshotT1.png)
 
@@ -93,6 +97,13 @@ Uninstall
 
 Release Notes 
 --------------------
+Version 1.1
+
+- Add sample.txt for the first time.
+- Change window titles.
+- Change the behavior after tap or long tap.
+- Add some magic words.
+
 Version 1.0
 
 - First release.

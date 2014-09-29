@@ -1,0 +1,28 @@
+-------------------- to Pasteboard
+How are you doing?
+I'd better get going, see you!
+
+-------------------- to Browser
+url: http://wanswings.wxoxw.jp/
+url: https://github.com/wanswings/
+
+-------------------- to Google Maps
+map: kagoshima, japan
+route: from: tokyo, japan to: nagoya, japan
+
+-------------------- to Email Client
+mailto: aaa@bbb.ccc
+mailto: ddd@eee.fff,ggg@hhh.iii
+
+-------------------- to Dictionary
+dict: belly
+dict: tummies
+dict: abdomen
+
+-------------------- to Twitter
+twitter: Morning!
+twitter: Night!
+
+-------------------- to YouTube
+youtube: Kristin Chenoweth
+youtube: Idina Menzel

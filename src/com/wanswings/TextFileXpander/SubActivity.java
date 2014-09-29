@@ -35,9 +35,6 @@ import android.widget.TextView;
 public class SubActivity extends Activity {
 
 	protected static final String EXTRA_FROM_SUB = "fromSub";
-	protected static final String EXTRA_RESULT_SUB_TYPE = "resultSubType";
-	protected static final String EXTRA_RESULT_SUB_TYPE_CLICK = "subClick";
-	protected static final String EXTRA_RESULT_SUB_TYPE_LONG_CLICK = "subLong";
 	protected static final String EXTRA_RESULT_SUB = "resultSub";
 
 	private String packageName;
@@ -67,6 +64,7 @@ public class SubActivity extends Activity {
 		boolean fromMain = intent.getBooleanExtra(MainActivity.EXTRA_FROM_MAIN, false);
 		if (fromMain) {
 			String localFileName = intent.getStringExtra(MainActivity.EXTRA_PARAM_MAIN);
+			setTitle(localFileName);
 			Log.i(packageName, classNameForLog + "EXTRA_PARAM_MAIN..." + localFileName);
 			refreshLocalData(localFileName);
 		}
@@ -164,7 +162,11 @@ public class SubActivity extends Activity {
 				ListView listView = (ListView)parent;
 				@SuppressWarnings("unchecked")
 				Map<String, String> itemMap = (Map<String, String>)listView.getItemAtPosition(position);
-				backToMain(EXTRA_RESULT_SUB_TYPE_CLICK, itemMap.get("child"));
+				PushData push = new PushData(SubActivity.this);
+				boolean isStay = push.itemClick(itemMap.get("child"));
+				if (!isStay) {
+					backToMain(false);
+				}
 			}
 		});
 		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -173,17 +175,17 @@ public class SubActivity extends Activity {
 				ListView listView = (ListView)parent;
 				@SuppressWarnings("unchecked")
 				Map<String, String> itemMap = (Map<String, String>)listView.getItemAtPosition(position);
-				backToMain(EXTRA_RESULT_SUB_TYPE_LONG_CLICK, itemMap.get("child"));
+				PushData push = new PushData(SubActivity.this);
+				push.itemLongClick(itemMap.get("child"));
 				return true;
 			}
 		});
 	}
 
-	private void backToMain(String type, String item) {
+	private void backToMain(boolean isStay) {
 		Intent intent = new Intent(SubActivity.this, MainActivity.class);
 		intent.putExtra(EXTRA_FROM_SUB, true);
-		intent.putExtra(EXTRA_RESULT_SUB_TYPE, type);
-		intent.putExtra(EXTRA_RESULT_SUB, item);
+		intent.putExtra(EXTRA_RESULT_SUB, isStay);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		intent.setAction(Intent.ACTION_VIEW);
 		startActivity(intent);

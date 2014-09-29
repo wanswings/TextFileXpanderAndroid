@@ -14,6 +14,7 @@ import android.content.SharedPreferences.Editor;
 public class PrivateSharedPrefs {
 
 	protected static final String SAVE_PREFS_NAME_MAIN = "MAIN";
+	protected static final String[] SAVE_KEYS_FIRSTTIME = {"FIRSTTIME"};
 	protected static final String[] SAVE_KEYS_MAIN = {"VIEWTYPE", "NOTIFICATION", "CURRENTSTORAGE"};
 	protected static final String SAVE_PREFS_NAME_STORAGE = "STORAGE";
 	protected static final String[] SAVE_KEYS_STORAGE = {"CURRENTPATH"};
