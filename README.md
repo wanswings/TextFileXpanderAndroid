@@ -35,7 +35,7 @@ How-To Use
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot0.png)
 
-* Menu > Load Data > Choose Storage.
+* Loading your own data. (Menu > Load Data > Choose Storage)
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot1.png)
 
@@ -43,26 +43,28 @@ How-To Use
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot2.png)
 
-* Choose your data folder, you can see the file names list. (Default view is the Standard View)
+* Choose your data folder. You can see the file names list after choosing the folder. (Default view is the Standard View)
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot3.png)
 
-* Tap a file name, you can see your fixed phrases in the selected file.
+* Tap a file name, you can see your text data in the selected file.
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot4.png)
 
 `TextFileXpander is not automatic sync. Use "Refresh" of the menu item.`
 
 #### mailto.txt
+```
+-------------------- paste
+aaa@bbb.ccc
+ddd@eee.fff
+ggg@hhh.iii
 
-    -------------------- paste
-    aaa@bbb.ccc
-    ddd@eee.fff
-    ggg@hhh.iii
-    -------------------- launch email client
-    mailto: jjj@kkk.lll
-    mailto: mmm@nnn.ooo,ppp@qqq.rrr
-    mailto: sss@ttt.uuu,vvv@www.xxx,yyy@zzz
+-------------------- launch email client
+mailto: jjj@kkk.lll
+mailto: mmm@nnn.ooo,ppp@qqq.rrr
+mailto: sss@ttt.uuu,vvv@www.xxx,yyy@zzz
+```
 
 * Tap a fixed phrase, then close TextFileXpander and paste to the Clipboard.
 
@@ -95,8 +97,12 @@ Uninstall
 1. Launch the Settings app, then tap Application Manager.
 2. Tap TextFileXpander under the Downloaded tab, and then tap the Uninstall.
 
-Release Notes 
+Release Notes
 --------------------
+Version 1.2
+
+- Add some magic words.
+
 Version 1.1
 
 - Add sample.txt for the first time.

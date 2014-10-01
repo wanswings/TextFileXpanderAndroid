@@ -52,6 +52,11 @@ public class PushData {
 					// dict
 					str = matchStr;
 				}
+				else if (matchCmd.equals("flight")) {
+					// flight
+					url = "http://www.google.com/search?q=flight%20" + URLEncoder.encode(matchStr, "utf-8");
+					action = Intent.ACTION_VIEW;
+				}
 				else if (matchCmd.equals("mailto")) {
 					// mailto
 					url = "mailto:" + matchStr;
@@ -84,6 +89,11 @@ public class PushData {
 						action = Intent.ACTION_VIEW;
 					}
 				}
+				else if (matchCmd.equals("tel")) {
+					// tel
+					url = "tel:" + matchStr;
+					action = Intent.ACTION_DIAL;
+				}
 				else if (matchCmd.equals("twitter")) {
 					// twitter
 					url = "twitter://post?message=" + URLEncoder.encode(matchStr, "utf-8");
@@ -92,6 +102,11 @@ public class PushData {
 				else if (matchCmd.equals("url")) {
 					// url
 					url = matchStr;
+					action = Intent.ACTION_VIEW;
+				}
+				else if (matchCmd.equals("weather")) {
+					// weather
+					url = "http://www.weather.com/search/enhancedlocalsearch?where=" + URLEncoder.encode(matchStr, "utf-8");
 					action = Intent.ACTION_VIEW;
 				}
 				else if (matchCmd.equals("youtube")) {
