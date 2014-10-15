@@ -6,6 +6,7 @@
     <string name="title_activity_main">TextFileXpander</string>
     <string name="title_activity_sub">TextFileXpander</string>
     <string name="title_activity_dropbox_auth">Dropbox Authentication</string>
+    <string name="title_activity_google_auth">Google Authentication</string>
     <string name="action_load_data">Load Data</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_add_notification">Add Notification</string>
@@ -17,6 +18,7 @@
     <string name="dialog_title_select_view_type">Choose View Type</string>
     <string name="dialog_title_reset">Reset</string>
     <string name="dialog_message_reset">Do you want to initialize application data?</string>
+    <string name="dialog_authorization">Authorization&#8230;</string>
     <string name="dialog_loading_entries">Loading entries&#8230;</string>
     <string name="dialog_loading_files">Loading files&#8230;</string>
     <string name="mark_next">&gt;</string>
@@ -24,5 +26,6 @@
     <string name="toast_copied_clipboard">Text has been copied to clipboard</string>
     <string name="error_internet_not_available">Internet not available</string>
     <string name="error_external_storage_not_ready">External storage not ready</string>
+    <string name="error_gps_not_available">Google Play Services not available</string>
 
 </resources>

@@ -19,9 +19,17 @@ mailto: ddd@eee.fff,ggg@hhh.iii
 map: kagoshima, japan
 route: from: tokyo, japan to: nagoya, japan
 
+-------------------- to Foursquare
+near: Clearwater, Florida
+near: kirishima kagoshima, Japan
+
 -------------------- to Contacts
 people: Grandma
 people: Grand Grandpa
+
+-------------------- to Epicurious.com
+recipe: salmon
+recipe: beef
 
 -------------------- to Phone
 tel: 000-999

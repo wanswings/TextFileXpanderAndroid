@@ -67,12 +67,22 @@ public class PushData {
 					url = "http://maps.google.com/maps?q=" + URLEncoder.encode(matchStr, "utf-8");
 					action = Intent.ACTION_VIEW;
 				}
+				else if (matchCmd.equals("near")) {
+					// near
+					url = "http://foursquare.com/explore?near=" + URLEncoder.encode(matchStr, "utf-8");
+					action = Intent.ACTION_VIEW;
+				}
 				else if (matchCmd.equals("people")) {
 					// people
 					url = "content://contacts/people/";
 					action = Intent.ACTION_VIEW;
 					str = matchStr;
 					isSendClipboard = true;
+				}
+				else if (matchCmd.equals("recipe")) {
+					// recipe
+					url = "http://www.epicurious.com/tools/searchresults?search=" + URLEncoder.encode(matchStr, "utf-8");
+					action = Intent.ACTION_VIEW;
 				}
 				else if (matchCmd.equals("route")) {
 					// route

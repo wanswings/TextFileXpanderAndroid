@@ -60,10 +60,10 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 	private static final String VIEW_TYPE_STD = "Standard View";
 	private static final String VIEW_TYPE_EXP = "Expandable View";
 	private static final String[] VIEW_TYPES = {VIEW_TYPE_STD, VIEW_TYPE_EXP};
-	private static final String[] STORAGE_NAMES = {"Dropbox", "EXT Storage"};
-	private static final String[] STORAGE_CLASSES = {Dropbox.class.getName(), ExternalStorage.class.getName()};
+	private static final String DEVICE_STORAGE = "EXT Storage";
+	private static final String[] STORAGE_NAMES = {"Dropbox", "Google Drive", DEVICE_STORAGE};
+	private static final String[] STORAGE_CLASSES = {Dropbox.class.getName(), GoogleDrive.class.getName(), ExternalStorage.class.getName()};
 
-	private boolean isRestartApp = false;
 	private Object storage = null;
 	private String currentStorage;
 	private int selectedStorageIdx;
@@ -73,18 +73,6 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 	private String packageName;
 	private String classNameForLog;
 	private PrivateSharedPrefs prefs;
-
-	@Override
-	protected void onDestroy() {
-		Log.i(packageName, classNameForLog + "onDestroy start");
-		if (isRestartApp) {
-			isRestartApp = false;
-			Intent intent = new Intent(this, this.getClass());
-			intent.setAction(Intent.ACTION_VIEW);
-			startActivity(intent);
-		}
-		super.onDestroy();
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -252,6 +240,14 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 	}
 
 	@Override
+	public void readyToStartGoogleAuthActivity() {
+		Log.i(packageName, classNameForLog + "readyToStartGoogleAuthActivity start");
+		Intent intent = new Intent(this, GoogleAuthActivity.class);
+		intent.setAction(Intent.ACTION_VIEW);
+		startActivity(intent);
+	}
+
+	@Override
 	public void cancelSelectDirDialog() {
 		Log.i(packageName, classNameForLog + "cancelSelectDirDialog start");
 		closeStorage();
@@ -350,9 +346,10 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 				if (selectedViewTypeIdx >= 0) {
 					currentViewType = VIEW_TYPES[selectedViewTypeIdx];
 					saveKeys(currentViewType, null, null);
-					isRestartApp = true;
 					Toast.makeText(MainActivity.this, R.string.toast_restart, Toast.LENGTH_LONG).show();
+					Intent intent = getIntent();
 					finish();
+					startActivity(intent);
 				}
 			}
 		})
@@ -377,9 +374,10 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 				}
 				prefs.clearAllKeys();
 				removeNotification();
-				isRestartApp = true;
 				Toast.makeText(MainActivity.this, R.string.toast_restart, Toast.LENGTH_LONG).show();
+				Intent intent = getIntent();
 				finish();
+				startActivity(intent);
 			}
 		})
 		.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -674,7 +672,7 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 	}
 
 	private void groupItemLongClick(String fname) {
-		if (currentStorage.equals("Dropbox")) {
+		if (!currentStorage.equals(DEVICE_STORAGE)) {
 			launchTextAppForCloud(fname);
 		}
 		else {

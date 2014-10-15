@@ -13,6 +13,7 @@ public interface StorageListenerInterface extends EventListener {
 
 	public void readyToReadPrivateFiles();
 	public void readyToStartDropboxAuthActivity();
+	public void readyToStartGoogleAuthActivity();
 	public void cancelSelectDirDialog();
 
 }

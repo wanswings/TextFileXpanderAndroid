@@ -10,7 +10,7 @@ TextFileXpander is a simple application for Android.
 Easy to paste your fixed phrase to the Clipboard.  
 Launch your default application for text/plain when you long tap a file name.  
 Magic words provides for cooperation with an external application.  
-Share with your Mac, Windows, iOS and Android devices.  
+Share with your Mac, Windows, iOS and Android devices using Dropbox or Google Drive.  
 
 Requirement
 --------------------
@@ -99,6 +99,12 @@ Uninstall
 
 Release Notes
 --------------------
+Version 1.3
+
+- Integrate Google Drive.
+- Add some magic words.
+- Fix some issues.
+
 Version 1.2
 
 - Add some magic words.

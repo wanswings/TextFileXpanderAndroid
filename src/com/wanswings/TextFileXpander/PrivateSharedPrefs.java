@@ -19,6 +19,7 @@ public class PrivateSharedPrefs {
 	protected static final String SAVE_PREFS_NAME_STORAGE = "STORAGE";
 	protected static final String[] SAVE_KEYS_STORAGE = {"CURRENTPATH"};
 	protected static final String[] SAVE_KEYS_DROPBOX = {"DROPBOXKEY", "DROPBOXSECRET"};
+	protected static final String[] SAVE_KEYS_GOOGLE = {"GOOGLEACCOUNT", "GOOGLEPARENT"};
 
 	private Context mContext;
 	private String prefsName;

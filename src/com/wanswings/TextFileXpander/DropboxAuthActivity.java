@@ -27,10 +27,10 @@ public class DropboxAuthActivity extends Activity {
 	protected static final String EXTRA_FROM_DROPBOX = "fromDropbox";
 	protected static final String EXTRA_RESULT_DROPBOX = "resultDropbox";
 
-	private DropboxAPI<AndroidAuthSession> mAPI;
 	private String packageName;
 	private String classNameForLog;
 	private PrivateSharedPrefs prefs;
+	private AuthCommon common;
 
 	@Override
 	protected void onDestroy() {
@@ -45,6 +45,7 @@ public class DropboxAuthActivity extends Activity {
 		packageName = this.getPackageName();
 		classNameForLog = this.getClass().getName() + "...";
 		prefs = new PrivateSharedPrefs(this, PrivateSharedPrefs.SAVE_PREFS_NAME_STORAGE);
+		common = (AuthCommon)getApplication();
 		Log.i(packageName, classNameForLog + "onCreate start");
 
 		setContentView(R.layout.activity_dropbox);
@@ -64,30 +65,31 @@ public class DropboxAuthActivity extends Activity {
 		if (info == null || !info.isConnected()) {
 			// offline
 			Toast.makeText(DropboxAuthActivity.this, R.string.error_internet_not_available, Toast.LENGTH_LONG).show();
-			mAPI = null;
+			common.mDropboxAPI = null;
 			Intent intent = new Intent(this, MainActivity.class);
+			intent.putExtra(EXTRA_FROM_DROPBOX, true);
+			intent.putExtra(EXTRA_RESULT_DROPBOX, false);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			intent.setAction(Intent.ACTION_VIEW);
 			startActivity(intent);
 			finish();
 		}
-		else if (mAPI == null) {
+		else if (common.mDropboxAPI == null) {
 			AppKeyPair appKeyPair = new AppKeyPair(getString(R.string.dropbox_app_key),
 													getString(R.string.dropbox_app_secret));
 			String[] keys = prefs.getKeys(PrivateSharedPrefs.SAVE_KEYS_DROPBOX);
 			if (keys == null) {
 				AndroidAuthSession session  = new AndroidAuthSession(appKeyPair);
-				mAPI = new DropboxAPI<AndroidAuthSession>(session);
+				common.mDropboxAPI = new DropboxAPI<AndroidAuthSession>(session);
 			}
 			else {
 				AndroidAuthSession session = new AndroidAuthSession(appKeyPair, new AccessTokenPair(keys[0], keys[1]));
-				mAPI = new DropboxAPI<AndroidAuthSession>(session);
+				common.mDropboxAPI = new DropboxAPI<AndroidAuthSession>(session);
 			}
-			if (!mAPI.getSession().isLinked()) {
-				mAPI.getSession().startAuthentication(DropboxAuthActivity.this);
+			if (!common.mDropboxAPI.getSession().isLinked()) {
+				common.mDropboxAPI.getSession().startAuthentication(DropboxAuthActivity.this);
 			}
 			else {
-				mAPI = null;
 				Intent intent = new Intent(DropboxAuthActivity.this, MainActivity.class);
 				intent.putExtra(EXTRA_FROM_DROPBOX, true);
 				intent.putExtra(EXTRA_RESULT_DROPBOX, true);
@@ -99,7 +101,7 @@ public class DropboxAuthActivity extends Activity {
 		}
 		else {
 			boolean result = true;
-			AndroidAuthSession session = mAPI.getSession();
+			AndroidAuthSession session = common.mDropboxAPI.getSession();
 			if (session.authenticationSuccessful()) {
 				Log.i(packageName, classNameForLog + "authenticationSuccessful");
 				try {
@@ -121,7 +123,9 @@ public class DropboxAuthActivity extends Activity {
 				result = false;
 			}
 
-			mAPI = null;
+			if (!result) {
+				common.mDropboxAPI = null;
+			}
 			Intent intent = new Intent(DropboxAuthActivity.this, MainActivity.class);
 			intent.putExtra(EXTRA_FROM_DROPBOX, true);
 			intent.putExtra(EXTRA_RESULT_DROPBOX, result);
