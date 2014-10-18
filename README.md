@@ -91,7 +91,7 @@ mailto: sss@ttt.uuu,vvv@www.xxx,yyy@zzz
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshotA.png)
 
-* Standard View Menu
+* Memorizable View Menu
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshotB.png)
 
