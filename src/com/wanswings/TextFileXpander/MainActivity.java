@@ -33,6 +33,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -59,7 +60,8 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 	private static final String SAMPLE_FILE = "sample.txt";
 	private static final String VIEW_TYPE_STD = "Standard View";
 	private static final String VIEW_TYPE_EXP = "Expandable View";
-	private static final String[] VIEW_TYPES = {VIEW_TYPE_STD, VIEW_TYPE_EXP};
+	private static final String VIEW_TYPE_TEXT = "Memorizable View";
+	private static final String[] VIEW_TYPES = {VIEW_TYPE_STD, VIEW_TYPE_EXP, VIEW_TYPE_TEXT};
 	private static final String DEVICE_STORAGE = "EXT Storage";
 	private static final String[] STORAGE_NAMES = {"Dropbox", "Google Drive", DEVICE_STORAGE};
 	private static final String[] STORAGE_CLASSES = {Dropbox.class.getName(), GoogleDrive.class.getName(), ExternalStorage.class.getName()};
@@ -185,9 +187,8 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
+		Log.i(packageName, classNameForLog + "onOptionsItemSelected start");
+
 		int id = item.getItemId();
 		if (id == R.id.action_load_data) {
 			selectStorage();
@@ -481,7 +482,8 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 		List<Integer> groupLayoutList = new ArrayList<Integer>();
 		List<List<Map<String, String>>> itemsMapListList = new ArrayList<List<Map<String, String>>>();
 		List<List<Integer>> itemsLayoutListList = new ArrayList<List<Integer>>();
-		Pattern pattern = Pattern.compile("^(-{2}-+)\\s*(.*)");
+		Pattern pattern1 = Pattern.compile("^(-{2}-+)\\s*(.*)");
+		Pattern pattern2 = Pattern.compile("^marker:(strong:|weak:)?\\s*(.+)");
 
 		String[] fileList = fileList();
 		Arrays.sort(fileList);
@@ -502,12 +504,27 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 				while ((line = br.readLine())!= null) {
 					if (line.length() > 0) {
 						Map<String, String> itemMap = new HashMap<String, String>();
-						Matcher match = pattern.matcher(line);
-						if (match.find()) {
-							itemMap.put("child", match.group(2));
+						Matcher match1 = pattern1.matcher(line);
+						if (match1.find()) {
+							itemMap.put("marker", "");
+							itemMap.put("child", match1.group(2));
 							itemsLayoutList.add(R.layout.list_separator);
 						}
 						else {
+							Matcher match2 = pattern2.matcher(line);
+							if (match2.find()) {
+								String matchCmd = match2.group(1);
+								line = match2.group(2);
+								if (matchCmd == null) {
+									itemMap.put("marker", "normal:");
+								}
+								else {
+									itemMap.put("marker", matchCmd);									
+								}
+							}
+							else {
+								itemMap.put("marker", "");
+							}
 							itemMap.put("child", line);
 							itemsLayoutList.add(R.layout.expandable_list);
 						}
@@ -546,7 +563,7 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 			public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 				final View itemRenderer = super.getGroupView(groupPosition, isExpanded, convertView, parent);
 				final TextView tview = (TextView)itemRenderer.findViewById(android.R.id.text1);
-				tview.setTextColor(0xff000000);
+				tview.setTextColor(Color.BLACK);
 				tview.setEllipsize(TruncateAt.END);
 				tview.setHorizontallyScrolling(true);
 
@@ -556,9 +573,26 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 			public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 				final View itemRenderer = super.getChildView(groupPosition, childPosition, isLastChild, convertView, parent);
 				final TextView tview = (TextView)itemRenderer.findViewById(android.R.id.text1);
-				tview.setTextColor(0xff0000a0);
 				tview.setEllipsize(TruncateAt.END);
 				tview.setHorizontallyScrolling(true);
+
+				@SuppressWarnings("unchecked")
+				Map<String, String> itemMap = (Map<String, String>)getChild(groupPosition, childPosition);
+				String marker = itemMap.get("marker");
+				int fg;
+				if (marker.equals("strong:")) {
+					fg = Color.RED;
+				}
+				else if (marker.equals("weak:")) {
+					fg = Color.LTGRAY;
+				}
+				else if (marker.equals("normal:")) {
+					fg = Color.BLUE;
+				}
+				else {
+					fg = Color.BLACK;
+				}
+				tview.setTextColor(fg);
 
 				return itemRenderer;
 			}
@@ -632,7 +666,7 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 			public View getView(int position, View convertView, ViewGroup parent) {
 				final View itemRenderer = super.getView(position, convertView, parent);
 				final TextView tview = (TextView)itemRenderer.findViewById(android.R.id.text1);
-				tview.setTextColor(0xff000000);
+				tview.setTextColor(Color.BLACK);
 				tview.setEllipsize(TruncateAt.END);
 				tview.setHorizontallyScrolling(true);
 
@@ -651,7 +685,13 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 				@SuppressWarnings("unchecked")
 				Map<String, String> groupMap = (Map<String, String>)listView.getItemAtPosition(position);
 
-				Intent intent = new Intent(MainActivity.this, SubActivity.class);
+				Intent intent = null;
+				if (currentViewType.equals(VIEW_TYPE_TEXT)) {
+					intent = new Intent(MainActivity.this, TextViewActivity.class);
+				}
+				else {
+					intent = new Intent(MainActivity.this, SubActivity.class);
+				}
 				intent.putExtra(EXTRA_FROM_MAIN, true);
 				intent.putExtra(EXTRA_PARAM_MAIN, groupMap.get("group"));
 				intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

@@ -11,6 +11,7 @@ Easy to paste your fixed phrase to the Clipboard.
 Launch your default application for text/plain when you long tap a file name.  
 Magic words provides for cooperation with an external application.  
 Share with your Mac, Windows, iOS and Android devices using Dropbox or Google Drive.  
+Memorize your lines in the Memorizable View.  
 
 Requirement
 --------------------
@@ -70,21 +71,41 @@ mailto: sss@ttt.uuu,vvv@www.xxx,yyy@zzz
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot5.png)
 
-* Menu > View Type > There are 2 types view you can choose.
+* Menu > View Type > There are 3 types view you can choose. Default view is the Standard View.
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot6.png)
 
-* Default view is the Standard View. If you change view, automatically restart TextFileXpander.
+* If you chose the Expandable View, automatically restart TextFileXpander, and you can see the file names list in the Expandable View.
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot7.png)
 
-* You can see the file names list in the Expandable View.
+* Tap a file name, you can see your text data below the selected file name.
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot8.png)
 
-* Tap a file name, you can see your fixed phrases below the selected file name.
+* If you chose the Memorizable View, automatically restart TextFileXpander, and you can see the file names list same as the Standard View.
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot9.png)
+
+* Tap a file name, you can see your text data in the Memorizable View.
+
+![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshotA.png)
+
+* Standard View Menu
+
+![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshotB.png)
+
+* Menu > Font Size > Choose relative proportions size.
+
+![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshotC.png)
+
+* If you changed the font size, you can see new scaling text in the view.
+
+![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshotD.png)
+
+* Menu > Hide Marker > Hide all "marker:" Magic word lines.
+
+![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshotE.png)
 
 * Screenshots of TextFileXpander running on 7-inch Tablet.
 
@@ -99,6 +120,11 @@ Uninstall
 
 Release Notes
 --------------------
+Version 2.0
+
+- Add Memorizable View.
+- Add "marker" magic word.
+
 Version 1.3
 
 - Integrate Google Drive.

@@ -16,6 +16,8 @@ public class PrivateSharedPrefs {
 	protected static final String SAVE_PREFS_NAME_MAIN = "MAIN";
 	protected static final String[] SAVE_KEYS_FIRSTTIME = {"FIRSTTIME"};
 	protected static final String[] SAVE_KEYS_MAIN = {"VIEWTYPE", "NOTIFICATION", "CURRENTSTORAGE"};
+	protected static final String SAVE_PREFS_NAME_TEXTVIEW = "TEXTVIEW";
+	protected static final String[] SAVE_KEYS_TEXTVIEW = {"FONTSIZE", "HIDEMARKER"};
 	protected static final String SAVE_PREFS_NAME_STORAGE = "STORAGE";
 	protected static final String[] SAVE_KEYS_STORAGE = {"CURRENTPATH"};
 	protected static final String[] SAVE_KEYS_DROPBOX = {"DROPBOXKEY", "DROPBOXSECRET"};
@@ -34,10 +36,14 @@ public class PrivateSharedPrefs {
 		Editor edit1 = prefs1.edit();
 		edit1.clear();
 		edit1.commit();
-		SharedPreferences prefs2 = mContext.getSharedPreferences(SAVE_PREFS_NAME_STORAGE, Context.MODE_PRIVATE);
+		SharedPreferences prefs2 = mContext.getSharedPreferences(SAVE_PREFS_NAME_TEXTVIEW, Context.MODE_PRIVATE);
 		Editor edit2 = prefs2.edit();
 		edit2.clear();
 		edit2.commit();
+		SharedPreferences prefs3 = mContext.getSharedPreferences(SAVE_PREFS_NAME_STORAGE, Context.MODE_PRIVATE);
+		Editor edit3 = prefs3.edit();
+		edit3.clear();
+		edit3.commit();
 	}
 
 	public String[] getKeys(String[] keys) {

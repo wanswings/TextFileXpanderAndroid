@@ -1,3 +1,8 @@
+-------------------- Marker
+marker: Normal marker.
+marker:strong: Strong marker.
+marker:weak: Weak marker.
+
 -------------------- to Clipboard
 How are you doing?
 I'd better get going, see you!

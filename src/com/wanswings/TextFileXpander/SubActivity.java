@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils.TruncateAt;
@@ -90,7 +91,8 @@ public class SubActivity extends Activity {
 	private void refreshLocalData(String fname) {
 		List<Map<String, String>> itemsMapList = new ArrayList<Map<String, String>>();
 		List<Integer> itemsLayoutList = new ArrayList<Integer>();
-		Pattern pattern = Pattern.compile("^(-{2}-+)\\s*(.*)");
+		Pattern pattern1 = Pattern.compile("^(-{2}-+)\\s*(.*)");
+		Pattern pattern2 = Pattern.compile("^marker:(strong:|weak:)?\\s*(.+)");
 
 		boolean existSubData = false;
 		InputStream is = null;
@@ -103,12 +105,27 @@ public class SubActivity extends Activity {
 				if (line.length() > 0) {
 					existSubData = true;
 					Map<String, String> itemMap = new HashMap<String, String>();
-					Matcher match = pattern.matcher(line);
-					if (match.find()) {
-						itemMap.put("child", match.group(2));
+					Matcher match1 = pattern1.matcher(line);
+					if (match1.find()) {
+						itemMap.put("marker", "");
+						itemMap.put("child", match1.group(2));
 						itemsLayoutList.add(R.layout.list_separator);
 					}
 					else {
+						Matcher match2 = pattern2.matcher(line);
+						if (match2.find()) {
+							String matchCmd = match2.group(1);
+							line = match2.group(2);
+							if (matchCmd == null) {
+								itemMap.put("marker", "normal:");
+							}
+							else {
+								itemMap.put("marker", matchCmd);									
+							}
+						}
+						else {
+							itemMap.put("marker", "");
+						}
 						itemMap.put("child", line);
 						itemsLayoutList.add(android.R.layout.simple_list_item_1);
 					}
@@ -144,9 +161,26 @@ public class SubActivity extends Activity {
 			public View getView(int position, View convertView, ViewGroup parent) {
 				final View itemRenderer = super.getView(position, convertView, parent);
 				final TextView tview = (TextView)itemRenderer.findViewById(android.R.id.text1);
-				tview.setTextColor(0xff0000a0);
 				tview.setEllipsize(TruncateAt.END);
 				tview.setHorizontallyScrolling(true);
+
+				@SuppressWarnings("unchecked")
+				Map<String, String> itemMap = (Map<String, String>)getItem(position);
+				String marker = itemMap.get("marker");
+				int fg;
+				if (marker.equals("strong:")) {
+					fg = Color.RED;
+				}
+				else if (marker.equals("weak:")) {
+					fg = Color.LTGRAY;
+				}
+				else if (marker.equals("normal:")) {
+					fg = Color.BLUE;
+				}
+				else {
+					fg = Color.BLACK;
+				}
+				tview.setTextColor(fg);
 
 				return itemRenderer;
 			}
