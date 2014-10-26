@@ -8,6 +8,7 @@
 package com.wanswings.TextFileXpander;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -36,6 +45,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils.TruncateAt;
 import android.util.Log;
@@ -61,7 +71,7 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 	private static final String VIEW_TYPE_STD = "Standard View";
 	private static final String VIEW_TYPE_EXP = "Expandable View";
 	private static final String VIEW_TYPE_TEXT = "Memorizable View";
-	private static final String[] VIEW_TYPES = {VIEW_TYPE_STD, VIEW_TYPE_EXP, VIEW_TYPE_TEXT};
+	private static final String[] VIEW_TYPES = {VIEW_TYPE_STD, VIEW_TYPE_TEXT};
 	private static final String DEVICE_STORAGE = "EXT Storage";
 	private static final String[] STORAGE_NAMES = {"Dropbox", "Google Drive", DEVICE_STORAGE};
 	private static final String[] STORAGE_CLASSES = {Dropbox.class.getName(), GoogleDrive.class.getName(), ExternalStorage.class.getName()};
@@ -75,6 +85,7 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 	private String packageName;
 	private String classNameForLog;
 	private PrivateSharedPrefs prefs;
+	private CustomExpandableListAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -483,8 +494,9 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 		List<List<Map<String, String>>> itemsMapListList = new ArrayList<List<Map<String, String>>>();
 		List<List<Integer>> itemsLayoutListList = new ArrayList<List<Integer>>();
 		Pattern pattern1 = Pattern.compile("^(-{2}-+)\\s*(.*)");
-		Pattern pattern2 = Pattern.compile("^marker:(strong:|weak:)?\\s*(.+)");
+		Pattern pattern2 = Pattern.compile("^([a-z]+):(.+)");
 
+		int idxMain = 0;
 		String[] fileList = fileList();
 		Arrays.sort(fileList);
 		for (String fname: fileList) {
@@ -495,6 +507,7 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 
 			List<Map<String, String>> itemsMapList = new ArrayList<Map<String, String>>();
 			List<Integer> itemsLayoutList = new ArrayList<Integer>();
+			int idxSub = 0;
 			InputStream is = null;
 			BufferedReader br = null;
 			try {
@@ -514,12 +527,19 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 							Matcher match2 = pattern2.matcher(line);
 							if (match2.find()) {
 								String matchCmd = match2.group(1);
-								line = match2.group(2);
-								if (matchCmd == null) {
-									itemMap.put("marker", "normal:");
+								String matchStr = match2.group(2);
+
+								if (matchCmd.equals("currency")) {
+									// currency
+									getCurrencyStart(matchStr, idxMain, idxSub);
+									itemMap.put("marker", "");
+								}
+								else if (matchCmd.equals("marker")) {
+									// marker
+									line = getMarkerColor(itemMap, matchStr, line);
 								}
 								else {
-									itemMap.put("marker", matchCmd);									
+									itemMap.put("marker", "");
 								}
 							}
 							else {
@@ -529,10 +549,12 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 							itemsLayoutList.add(R.layout.expandable_list);
 						}
 						itemsMapList.add(itemMap);
+						idxSub++;
 					}
 				}
 				itemsMapListList.add(itemsMapList);
 				itemsLayoutListList.add(itemsLayoutList);
+				idxMain++;
 			}
 			catch(IOException e) {
 				Log.e(packageName, classNameForLog + e.toString());
@@ -548,7 +570,7 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 			}
 		}
 
-		CustomExpandableListAdapter adapter = new CustomExpandableListAdapter(
+		adapter = new CustomExpandableListAdapter(
 				this,
 				groupMapList,
 				groupLayoutList,
@@ -588,6 +610,9 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 				}
 				else if (marker.equals("normal:")) {
 					fg = Color.BLUE;
+				}
+				else if (marker.equals("currency:")) {
+					fg = 0xffa52a2a;
 				}
 				else {
 					fg = Color.BLACK;
@@ -767,5 +792,91 @@ public class MainActivity extends Activity implements StorageListenerInterface {
 		intent.setAction(Intent.ACTION_VIEW);
 		intent.setDataAndType(Uri.parse("file://" + fullPath), "text/plain");
 		startActivity(intent);
+	}
+
+	private String getMarkerColor(Map<String, String> itemMap, String param, String line) {
+		Pattern pattern = Pattern.compile("^\\s*(strong:|weak:)?\\s*(.+)");
+		Matcher match = pattern.matcher(param);
+		if (match.find()) {
+			String matchCmd = match.group(1);
+			line = match.group(2);
+			if (matchCmd == null) {
+				itemMap.put("marker", "normal:");
+			}
+			else {
+				itemMap.put("marker", matchCmd);									
+			}
+		}
+		else {
+			itemMap.put("marker", "");
+		}
+
+		return line;
+	}
+
+	private void getCurrencyStart(String param, int idxMain, int idxSub) {
+		Pattern pattern = Pattern.compile("^\\s*from:\\s*(.+)\\s+to:\\s*(.+)");
+		Matcher match = pattern.matcher(param);
+		if (!match.find()) {
+			return;
+		}
+
+		String matchfrom = match.group(1);
+		String matchto = match.group(2);
+
+		try {
+			String wk = "http://www.google.com/finance/converter?a=1&from=";
+			wk += URLEncoder.encode(matchfrom, "utf-8");
+			wk += "&to=" + URLEncoder.encode(matchto, "utf-8");
+			HttpGetTask task = new HttpGetTask();
+			task.execute(new String[]{wk, String.valueOf(idxMain), String.valueOf(idxSub)});
+		}
+		catch (Exception e) {
+		}
+	}
+
+	class HttpGetTask extends AsyncTask<String, Void, Map<String, String>> {
+		@Override
+		protected Map<String, String> doInBackground(String... params) {
+			HttpClient client = new DefaultHttpClient();
+			HttpGet get = new HttpGet(params[0]);
+			try{
+				HttpResponse response = client.execute(get);
+				StatusLine statusLine = response.getStatusLine();
+				if(statusLine.getStatusCode() == HttpURLConnection.HTTP_OK){
+					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+					response.getEntity().writeTo(outputStream);
+					Map<String, String> resultMap = new HashMap<String, String>();
+					resultMap.put("getdata", outputStream.toString());
+					resultMap.put("idxMain", params[1]);
+					resultMap.put("idxSub", params[2]);
+					return resultMap;
+				}
+			}
+			catch (Exception e) {
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Map<String, String> result) {
+			Pattern pattern = Pattern.compile("<span class=bld>([0-9\\.]+).+</span>");
+			Matcher match = pattern.matcher(result.get("getdata"));
+			if (match.find()) {
+				String matchValue = match.group(1);
+
+				int idxMain = Integer.parseInt(result.get("idxMain"));
+				int idxSub = Integer.parseInt(result.get("idxSub"));
+				@SuppressWarnings("unchecked")
+				Map<String, String> itemMap = (Map<String, String>)adapter.getChild(idxMain, idxSub);
+				String line = itemMap.get("child");
+				line += "   [" + matchValue + "]";
+				itemMap.put("child", line);
+				itemMap.put("marker", "currency:");
+				Log.i(packageName, classNameForLog + "onPostExecute..." + line);
+
+				adapter.notifyDataSetChanged();
+			}
+		}
 	}
 }

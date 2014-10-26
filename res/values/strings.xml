@@ -20,6 +20,7 @@
     <string name="dialog_title_select_dir">Choose Folder</string>
     <string name="dialog_title_select_view_type">Choose View Type</string>
     <string name="dialog_title_reset">Reset</string>
+    <string name="dialog_title_font_size">Choose Font Size</string>
     <string name="dialog_message_reset">Do you want to initialize application data?</string>
     <string name="dialog_authorization">Authorization&#8230;</string>
     <string name="dialog_loading_entries">Loading entries&#8230;</string>

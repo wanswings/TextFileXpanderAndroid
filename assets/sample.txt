@@ -7,6 +7,10 @@ marker:weak: Weak marker.
 How are you doing?
 I'd better get going, see you!
 
+-------------------- to Google Finance
+currency: from:USD to:GBP
+currency: from:USD to:EUR
+
 -------------------- to Dictionary (N/A)
 dict: belly
 dict: tummies
@@ -23,6 +27,7 @@ mailto: ddd@eee.fff,ggg@hhh.iii
 -------------------- to Google Maps
 map: kagoshima, japan
 route: from: tokyo, japan to: nagoya, japan
+route: from: here to: kyoto, japan
 
 -------------------- to Foursquare
 near: Clearwater, Florida

@@ -6,12 +6,12 @@ TextFileXpander
 
 Introduction
 --------------------
-TextFileXpander is a simple application for Android.  
+TextFileXpander is a simple application using plain text files.  
 Easy to paste your fixed phrase to the Clipboard.  
+Memorize your lines in the Memorizable View.  
 Launch your default application for text/plain when you long tap a file name.  
 Magic words provides for cooperation with an external application.  
 Share with your Mac, Windows, iOS and Android devices using Dropbox or Google Drive.  
-Memorize your lines in the Memorizable View.  
 
 Requirement
 --------------------
@@ -71,17 +71,9 @@ mailto: sss@ttt.uuu,vvv@www.xxx,yyy@zzz
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot5.png)
 
-* Menu > View Type > There are 3 types view you can choose. Default view is the Standard View.
+* Menu > View Type > There are 2 types view you can choose. Default view is the Standard View.
 
 ![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot6.png)
-
-* If you chose the Expandable View, automatically restart TextFileXpander, and you can see the file names list in the Expandable View.
-
-![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot7.png)
-
-* Tap a file name, you can see your text data below the selected file name.
-
-![](https://raw.github.com/wanswings/TextFileXpanderAndroid/master/screenshots/screenshot8.png)
 
 * If you chose the Memorizable View, automatically restart TextFileXpander, and you can see the file names list same as the Standard View.
 
@@ -120,6 +112,14 @@ Uninstall
 
 Release Notes
 --------------------
+Version 2.1
+
+- Add "currency:" magic word.
+- Change the site for "flight:" magic word.
+- Modify "route:" magic word, add "from: here".
+- Change the site for "weather:" magic word.
+- Delete the Expandable View.
+
 Version 2.0
 
 - Add Memorizable View.

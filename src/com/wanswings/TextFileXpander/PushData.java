@@ -36,25 +36,39 @@ public class PushData {
 		Log.i(packageName, classNameForLog + "itemClick..." + str);
 		boolean isStay = false;
 
-		Pattern pattern = Pattern.compile("^([a-z]+):\\s*(.+)");
-		Matcher match = pattern.matcher(str);
-		if (match.find()) {
-			String matchCmd = match.group(1);
+		Pattern pattern1 = Pattern.compile("^([a-z]+):\\s*(.+)");
+		Matcher match1 = pattern1.matcher(str);
+		if (match1.find()) {
+			String matchCmd = match1.group(1);
 			Log.i(packageName, classNameForLog + "matchCmd..." + matchCmd);
-			String matchStr = match.group(2);
+			String matchStr = match1.group(2);
 			Log.i(packageName, classNameForLog + "matchStr..." + matchStr);
 
 			String url = null;
 			String action = null;
 			boolean isSendClipboard = false;
 			try {
-				if (matchCmd.equals("dict")) {
+				if (matchCmd.equals("currency")) {
+					// currency
+					Pattern pattern2 = Pattern.compile("^\\s*from:\\s*(.+)\\s+to:\\s*(\\S+)");
+					Matcher match2 = pattern2.matcher(matchStr);
+					if (match2.find()) {
+						String matchfrom = match2.group(1);
+						String matchto = match2.group(2);
+
+						url = "http://www.google.com/finance/?q=";
+						url += URLEncoder.encode(matchfrom, "utf-8");
+						url += URLEncoder.encode(matchto, "utf-8");
+						action = Intent.ACTION_VIEW;
+					}
+				}
+				else if (matchCmd.equals("dict")) {
 					// dict
 					str = matchStr;
 				}
 				else if (matchCmd.equals("flight")) {
 					// flight
-					url = "http://www.google.com/search?q=flight%20" + URLEncoder.encode(matchStr, "utf-8");
+					url = "http://flightaware.com/live/flight/" + URLEncoder.encode(matchStr, "utf-8");
 					action = Intent.ACTION_VIEW;
 				}
 				else if (matchCmd.equals("mailto")) {
@@ -90,12 +104,13 @@ public class PushData {
 					Matcher match2 = pattern2.matcher(matchStr);
 					if (match2.find()) {
 						String matchfrom = match2.group(1);
-						Log.i(packageName, classNameForLog + "matchfrom..." + matchfrom);
 						String matchto = match2.group(2);
-						Log.i(packageName, classNameForLog + "matchto..." + matchto);
 
-						url = "http://maps.google.com/maps?saddr=" + URLEncoder.encode(matchfrom, "utf-8")
-														+ "&daddr=" + URLEncoder.encode(matchto, "utf-8");
+						url = "http://maps.google.com/maps?saddr=";
+						if (!matchfrom.equals("here")) {
+							url += URLEncoder.encode(matchfrom, "utf-8");
+						}
+						url += "&daddr=" + URLEncoder.encode(matchto, "utf-8");
 						action = Intent.ACTION_VIEW;
 					}
 				}
@@ -116,7 +131,7 @@ public class PushData {
 				}
 				else if (matchCmd.equals("weather")) {
 					// weather
-					url = "http://www.weather.com/search/enhancedlocalsearch?where=" + URLEncoder.encode(matchStr, "utf-8");
+					url = "http://www.google.com/search?q=weather%20" + URLEncoder.encode(matchStr, "utf-8");
 					action = Intent.ACTION_VIEW;
 				}
 				else if (matchCmd.equals("youtube")) {

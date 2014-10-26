@@ -34,7 +34,7 @@ import android.widget.TextView;
 public class TextViewActivity extends Activity {
 
 	private static final String DEFAULT_FONTSIZE = "1.0";
-	private static final String[] FONT_SIZES = {"0.6", "0.8", "1.0", "1.2", "1.4", "1.6", "1.8", "2.0"};
+	private static final String[] FONT_SIZES = {"0.6", "0.8", "1.0", "1.2", "1.4", "1.6", "1.8", "2.0", "2.2", "2.4"};
 
 	private String fontSize;
 	private int selectedFontSizeIdx;
@@ -151,7 +151,7 @@ public class TextViewActivity extends Activity {
 			}
 		}
 		new AlertDialog.Builder(this)
-		.setTitle(R.string.dialog_title_select_view_type)
+		.setTitle(R.string.dialog_title_font_size)
 		.setSingleChoiceItems(FONT_SIZES, selected, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int idx) {
 				selectedFontSizeIdx = idx;
